@@ -21,7 +21,7 @@
     <el-table-column min-width="300px" label="标题">
       <template slot-scope="{row}">
         <span>{{ row.title }}</span>
-        <el-tag>{{ row.type }}</el-tag>
+<!--        <el-tag>{{ row.type }}</el-tag>-->
       </template>
     </el-table-column>
 
@@ -31,19 +31,19 @@
       </template>
     </el-table-column>
 
-    <el-table-column width="120px" label="Importance">
+    <el-table-column width="120px" label="重要度">
       <template slot-scope="scope">
         <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" />
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="Readings" width="95">
+    <el-table-column align="center" label="阅读数" width="95">
       <template slot-scope="scope">
         <span>{{ scope.row.pageviews }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column class-name="status-col" label="Status" width="110">
+    <el-table-column class-name="status-col" label="状态" width="110">
       <template slot-scope="{row}">
         <el-tag :type="row.status | statusFilter">
           {{ row.status }}

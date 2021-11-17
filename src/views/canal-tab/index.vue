@@ -1,6 +1,6 @@
 <template>
   <div class="tab-container">
-    <el-tag>mounted times ：{{ createdTimes }}</el-tag>
+<!--    <el-tag>mounted times ：{{ createdTimes }}</el-tag>-->
 <!--    <el-alert :closable="false" style="width:200px;display:inline-block;vertical-align: middle;margin-left:30px;" title="Tab with keep-alive" type="success" />-->
 
 <!--    <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">-->
@@ -10,13 +10,21 @@
 <!--          <tab-pane v-if="activeName==item.key" :type="item.key" @create="showCreatedTimes" />-->
 <!--        </keep-alive>-->
 <!--      </el-tab-pane>-->
+
 <!--    </el-tabs>-->
 
         <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">
 
-          <el-tab-pane v-if="activeName=='canal'" :key="tabMapOptions[0].key" :label="tabMapOptions[0].label" :name="tabMapOptions[0].key">
+
+          <el-tab-pane :key="tabMapOptions[0].key" :label="tabMapOptions[0].label" :name="tabMapOptions[0].key">
             <keep-alive>
-              <canal-pane :type="tabMapOptions[0].key" @create="showCreatedTimes" />
+              <canal-pane  v-if="activeName=='canal'"  :type="tabMapOptions[0].key" @create="showCreatedTimes" />
+            </keep-alive>
+          </el-tab-pane>
+
+          <el-tab-pane :key="tabMapOptions[1].key" :label="tabMapOptions[1].label" :name="tabMapOptions[1].key">
+            <keep-alive>
+              <tab-pane v-if="activeName=='CN'" :type="tabMapOptions[1].key" @create="showCreatedTimes" />
             </keep-alive>
           </el-tab-pane>
 

@@ -17,7 +17,7 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
 
-  // setToken('admin-token') // 屏蔽鉴权
+  setToken('admin-token') // 屏蔽鉴权
 
   // determine whether the user has logged in
   const hasToken = getToken()
