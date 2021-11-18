@@ -86,7 +86,8 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    // path: '/',
+    path: '/dashboard',
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -95,10 +96,10 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: '控制面板',
         meta: { title: '控制面板', icon: 'dashboard', affix: true }
-        , hidden: true
       }
     ]
   },
+
   {
     path: '/documentation',
     component: Layout,
@@ -108,7 +109,6 @@ export const constantRoutes = [
         component: () => import('@/views/documentation/index'),
         name: '文档Documentation',
         meta: { title: '文档', icon: 'documentation', affix: true }
-        , hidden: true
       }
     ]
   },
@@ -116,7 +116,6 @@ export const constantRoutes = [
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
-    hidden: true,
     children: [
       {
         path: 'index',
@@ -136,7 +135,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: '简介Profile', icon: 'user', noCache: true }
+        meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
   }
@@ -153,7 +152,6 @@ export const asyncRoutes = [
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
-    hidden: true,
     meta: {
       title: '权限',
       icon: 'lock',
@@ -204,16 +202,15 @@ export const asyncRoutes = [
   },
 
   /** when your routing map is too long, you can split it into small modules **/
-  // componentsRouter,
+  componentsRouter,
   chartsRouter,
-  // nestedRouter,
+  nestedRouter,
   tableRouter,
 
   {
     path: '/example',
     component: Layout,
     redirect: '/example/list',
-    hidden: true,
     name: 'Example',
     meta: {
       title: 'Example',
@@ -260,7 +257,6 @@ export const asyncRoutes = [
     component: Layout,
     redirect: 'noRedirect',
     name: 'ErrorPages',
-    hidden: true,
     meta: {
       title: 'Error Pages',
       icon: '404'
@@ -279,10 +275,10 @@ export const asyncRoutes = [
         meta: { title: '404', noCache: true }
       }
     ]
-  }
-  ,{
+  },
+
+  {
     path: '/error-log',
-    hidden: true,
     component: Layout,
     children: [
       {
@@ -296,7 +292,6 @@ export const asyncRoutes = [
 
   {
     path: '/excel',
-    hidden: true,
     component: Layout,
     redirect: '/excel/export-excel',
     name: 'Excel',
@@ -334,7 +329,6 @@ export const asyncRoutes = [
 
   {
     path: '/zip',
-    hidden: true,
     component: Layout,
     redirect: '/zip/download',
     alwaysShow: true,
@@ -352,7 +346,6 @@ export const asyncRoutes = [
 
   {
     path: '/pdf',
-    hidden: true,
     component: Layout,
     redirect: '/pdf/index',
     children: [
@@ -373,7 +366,6 @@ export const asyncRoutes = [
   {
     path: '/theme',
     component: Layout,
-    hidden: true,
     children: [
       {
         path: 'index',
@@ -387,7 +379,6 @@ export const asyncRoutes = [
   {
     path: '/clipboard',
     component: Layout,
-    hidden: true,
     children: [
       {
         path: 'index',
@@ -400,7 +391,6 @@ export const asyncRoutes = [
 
   {
     path: 'external-link',
-    hidden: true,
     component: Layout,
     children: [
       {

@@ -13,24 +13,26 @@
 
 <!--    </el-tabs>-->
 
-        <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">
+        <sw-trace-pane/>
+
+<!--        <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">-->
 
 
-          <el-tab-pane :key="tabMapOptions[0].key" :label="tabMapOptions[0].label" :name="tabMapOptions[0].key">
-            <keep-alive>
-              <canal-pane  v-if="activeName=='canal'"  :type="tabMapOptions[0].key" @create="showCreatedTimes" />
-            </keep-alive>
-          </el-tab-pane>
+<!--          <el-tab-pane :key="tabMapOptions[0].key" :label="tabMapOptions[0].label" :name="tabMapOptions[0].key">-->
+<!--            <keep-alive>-->
+<!--              <canal-pane  v-if="activeName=='canal'"  :type="tabMapOptions[0].key" @create="showCreatedTimes" />-->
+<!--            </keep-alive>-->
+<!--          </el-tab-pane>-->
 
-          <el-tab-pane :key="tabMapOptions[1].key" :label="tabMapOptions[1].label" :name="tabMapOptions[1].key">
-            <keep-alive>
-              <tab-pane v-if="activeName=='CN'" :type="tabMapOptions[1].key" @create="showCreatedTimes" />
-            </keep-alive>
-          </el-tab-pane>
+<!--          <el-tab-pane :key="tabMapOptions[1].key" :label="tabMapOptions[1].label" :name="tabMapOptions[1].key">-->
+<!--            <keep-alive>-->
+<!--              <tab-pane v-if="activeName=='CN'" :type="tabMapOptions[1].key" @create="showCreatedTimes" />-->
+<!--            </keep-alive>-->
+<!--          </el-tab-pane>-->
 
 
 
-        </el-tabs>
+<!--        </el-tabs>-->
 
   </div>
 </template>
@@ -38,10 +40,11 @@
 <script>
 import TabPane from './components/TabPane'
 import CanalPane from './components/CanalPane'
+import SwTracePane from "./components/SwTracePane";
 
 export default {
   name: 'Canal-Tab',
-  components: {CanalPane, TabPane },
+  components: {SwTracePane, CanalPane, TabPane },
   data() {
     return {
       tabMapOptions: [

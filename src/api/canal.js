@@ -8,3 +8,12 @@ export function fetchList(query) {
   })
 }
 
+export function traceCheck(query) {
+  return request({
+    url: '/admin/dataquery/sw/checkpoint',
+    method: 'get',
+    params: query
+  })
+}
+
+
