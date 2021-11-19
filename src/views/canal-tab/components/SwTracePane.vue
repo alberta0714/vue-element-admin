@@ -6,35 +6,25 @@
       <aside><strong>加载中……</strong></aside>
     </div>
 
+
     <div v-if="isLoaded">
-      <div>
-        <dl>
-          <strong>基础信息：</strong>
-          <aside>
-            <dd> 筛选时间范围：{{data.timeRangeStartGte}} ~ {{data.timeRangeEndLt}}</dd>
-            <dd> 持续始末时间：{{data.timeStart}} ~ {{data.timeEnd}}</dd>
-            <dd> 扫描相关Trace Id数：
-              <el-tag>
-                <count-to :end-val="data.totalTraceIdCount" :duration="500" :autoplay="true" suffix="个"/>
-              </el-tag>
-              耗时：{{data.tookHuman}}
-            </dd>
-            <!--            <dd> 业务数：{{ Object.keys(data.businessTraceIdCount).length }}个</dd>-->
-            <!--            <dd> 业务对象：{{data.businessTraceIdCount}}</dd>-->
-          </aside>
-        </dl>
 
+      <h4>基础信息：</h4>
+      <aside>
+        <p>
+          筛选时间范围：{{data.timeRangeStartGte}} ~ {{data.timeRangeEndLt}}<br/>
+          持续始末时间：{{data.timeStart}} ~ {{data.timeEnd}}<br/>
+          扫描相关根TraceId总数：
+          <el-tag>
+            <count-to :end-val="data.totalTraceIdCount" :duration="500" :autoplay="true" suffix="个"/>
+          </el-tag>
+          耗时：{{data.tookHuman}}<br/>
+        </p>
+        <!--            <dd> 业务数：{{ Object.keys(data.businessTraceIdCount).length }}个</dd>-->
+        <!--            <dd> 业务对象：{{data.businessTraceIdCount}}</dd>-->
+      </aside>
 
-        <strong>业务分组：</strong>
-        <dl>
-          <aside>
-            <dd v-for="(biVal, biName) in data.businessTraceIdCount">{{biName}}数量：{{biVal}}个</dd>
-          </aside>
-        </dl>
-
-      </div>
-
-      <strong>服务及链路信息：</strong>
+      <h4>服务映射及<span style="color:red;">异常链路</span>信息：</h4>
       <el-tabs type="border-card">
         <el-tab-pane label="当前Skywalking涉及服务与ID的映">
           <el-table :data="data.trafficList" border fit highlight-current-row style="width: 100%">
@@ -81,6 +71,23 @@
         </el-tab-pane>
 
 
+        <!-- 分组统计 -->
+        <el-tab-pane :label="tableBiGroup.labelName">
+          <el-table :data="tableBiGroup.list" border fit highlight-current-row style="width: 100%">
+            <el-table-column align="center" label="服务名称">
+              <template slot-scope="{row}">
+                <span>{{ row.key }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="数量">
+              <template slot-scope="{row}">
+                <span>{{ row.value }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+
+
       </el-tabs>
 
       <!-- 服务详情对话框 START -->
@@ -89,8 +96,12 @@
           :data="dialogServiceInfo.list"
           border fit highlight-current-row
         >
-          <el-table-column label="Key"><template slot-scope="{row}">{{row.key}}</template></el-table-column>
-          <el-table-column label="Value"><template slot-scope="{row}">{{row.value}}</template></el-table-column>
+          <el-table-column label="Key">
+            <template slot-scope="{row}">{{row.key}}</template>
+          </el-table-column>
+          <el-table-column label="Value">
+            <template slot-scope="{row}">{{row.value}}</template>
+          </el-table-column>
         </el-table>
 
 
@@ -140,6 +151,7 @@
         runtimeSwLabel: "RuntimeException异常链路",
 
         dialogServiceInfo: {visible: false} // 显示服务详情信息
+        , tableBiGroup: {list: [], labelName: "业务分组统计"}
       }
     },
     created() {
@@ -151,10 +163,10 @@
         console.log(data)
 
         this.dialogServiceInfo.list = [
-          { key:"服务名称", value: data.name },
-          { key:"Skywalking对应ID", value: data.id },
-          { key:"节点类型", value: data.nodeTypeName },
-          { key:"服务组", value: data.serviceGroup },
+          {key: "服务名称", value: data.name},
+          {key: "Skywalking对应ID", value: data.id},
+          {key: "节点类型", value: data.nodeTypeName},
+          {key: "服务组", value: data.serviceGroup},
         ]
 
         this.dialogServiceInfo.visible = true
@@ -166,8 +178,15 @@
         traceCheck(this.listQuery).then(response => {
           this.data = response.data
           this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
-          this.runtimeSwLabel = "断掉的链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
+          this.runtimeSwLabel = "RuntimeException异常链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
           this.isLoaded = true
+
+          this.tableBiGroup.list = []
+          for (let biName of Object.keys(this.data.businessTraceIdCount)) {
+            let biCount = this.data.businessTraceIdCount[biName]
+            this.tableBiGroup.list.push({key: biName, value: biCount})
+          }
+          this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
         })
       }
 
