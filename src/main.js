@@ -21,17 +21,17 @@ import './utils/error-log' // error log
 import * as filters from './filters' // global filters
 
 /**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
+ * If you don't want to use mock-server 如果不想使用mock-server
+ * you want to use MockJs for mock api  想使用MockJs做为mockapi, 可以执行mockXHR
  * you can execute: mockXHR()
  *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
+ * Currently MockJs will be used in the production environment, 当前MockJs会被用于生产环境
+ * please remove it before going online ! ! !  请在上线前移除它
  */
-if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
+// if (process.env.NODE_ENV === 'production') {
+//   const { mockXHR } = require('../mock')
+//   mockXHR()
+// }
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

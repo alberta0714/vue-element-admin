@@ -71,6 +71,7 @@ export const constantRoutes = [
     hidden: true
   },
 
+
   // 抄自tab的前端样式
   {
     path: '/',
@@ -84,9 +85,7 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
-    // path: '/',
     path: '/dashboard',
     component: Layout,
     redirect: '/dashboard',
@@ -99,6 +98,7 @@ export const constantRoutes = [
       }
     ]
   },
+
 
   {
     path: '/documentation',
