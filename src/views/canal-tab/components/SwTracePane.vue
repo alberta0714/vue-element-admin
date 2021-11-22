@@ -247,14 +247,16 @@
               this.tableBiGroup.list.push({key: biName, value: biCount})
             }
             this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+
+            this.$notify({
+              title: '数据加载成功',
+              message: '数据加载成功',
+              type: 'success',
+              duration: 2000
+            })
+
           })
 
-        this.$notify({
-          title: '数据加载成功',
-          message: '数据加载成功',
-          type: 'success',
-          duration: 2000
-        })
       }
 
     }

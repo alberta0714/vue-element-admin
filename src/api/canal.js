@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function traceCheck(query) {
   return request({
-    url: '/admin/dataquery/sw/checkpoint',
+    url: 'http://igetcool-data-query-sw-dev.svc.igetcool.com/admin/dataquery/sw/checkpoint',
     method: 'get',
     params: query
   })
