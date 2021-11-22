@@ -62,12 +62,12 @@
       <!-- 卡片 -->
       <h4>服务映射及<span style="color:red;">异常链路</span>信息：</h4>
       <el-tabs type="border-card">
-        
+
         <!-- 当前Skywalking涉及服务与ID的映 -->
         <el-tab-pane label="当前Skywalking涉及服务与ID的映">
           <el-table :data="data.trafficList" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="名称" element-loading-text="请给我点时间！">
-              <template slot-scope="{row}" >
+              <template slot-scope="{row}">
                 <span @click="showDialogServiceInfo(row)" style="cursor: pointer;">{{ row.name }}</span>
               </template>
             </el-table-column>
@@ -165,7 +165,7 @@
 </template>
 
 <script>
-  import {traceCheck} from '@/api/canal'
+  import {traceCheck, traceCheckApiDev} from '@/api/canal'
   import SplitPane from "vue-splitpane/src/split-pane/index";
   import countTo from 'vue-count-to'
   import VueCountTo from "vue-count-to/src/vue-countTo";
@@ -235,6 +235,7 @@
           this.listQuery.endLt = this.listQueryExt.qTimeRange[1]
         }
         traceCheck(this.listQuery)
+        // traceCheckApiDev(this.listQuery)
           .then(response => {
             this.data = response.data
             this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
