@@ -62,6 +62,16 @@
       <!-- 卡片 -->
       <h4>服务映射及<span style="color:red;">异常链路</span>信息：</h4>
       <el-tabs type="border-card">
+        <!-- 更简要的trace信息 -->
+        <!--        <el-tab-pane :label="brokenSwLabel">-->
+        <!--          <el-table :data="Object.keys(data.traceBroken)" border fit highlight-current-row style="width: 100%">-->
+        <!--            <el-table-column>-->
+        <!--              <template slot-scope="slop">-->
+        <!--                {{  slop.row  }}-->
+        <!--              </template>-->
+        <!--            </el-table-column>-->
+        <!--          </el-table>-->
+        <!--        </el-tab-pane>-->
 
         <!-- 当前Skywalking涉及服务与ID的映 -->
         <el-tab-pane label="当前Skywalking涉及服务与ID的映">
@@ -90,11 +100,12 @@
 
         <!--  断路-链路 -->
         <el-tab-pane :label="brokenSwLabel">
-          <el-table :data="data.trafficBrokenTraceIdSet" border fit highlight-current-row style="width: 100%">
+          <el-table :data="brokenTableData" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="TraceId">
-              <template slot-scope="scope">
-                <span>{{ scope.row }}</span>
-              </template>
+              <template slot-scope="scope"><span @click="showDialogBrokenTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.traceId}}</span></template>
+            </el-table-column>
+            <el-table-column align="center" label="StartTime">
+              <template slot-scope="scope"><span @click="showDialogBrokenTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.startTime}}</span></template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
@@ -132,10 +143,7 @@
 
       <!-- 服务详情对话框 START -->
       <el-dialog :visible.sync="dialogServiceInfo.visible" title="详情">
-        <el-table
-          :data="dialogServiceInfo.list"
-          border fit highlight-current-row
-        >
+        <el-table :data="dialogServiceInfo.list" border fit highlight-current-row>
           <el-table-column label="Key">
             <template slot-scope="{row}">{{row.key}}</template>
           </el-table-column>
@@ -143,13 +151,23 @@
             <template slot-scope="{row}">{{row.value}}</template>
           </el-table-column>
         </el-table>
-
-
-        <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogServiceInfo.visible = false">确认</el-button>
-      </span>
+        <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogServiceInfo.visible = false">确认</el-button></span>
       </el-dialog>
       <!-- 服务详情对话框 END -->
+      <!-- 断路详情对话窗口 -->
+      <el-dialog :visible.sync="dialogBrokenTraceInfo.visible" title="断路详情">
+        <el-table :data="dialogBrokenTraceInfo.list" border fit highlight-current-row>
+          <el-table-column label="segmentId"><template slot-scope="{row}"><span>{{ row.segmentId }}</span></template></el-table-column>
+          <el-table-column label="startDateTime"><template slot-scope="{row}"><span>{{ row.startDateTime }}</span></template></el-table-column>
+          <el-table-column label="error"><template slot-scope="{row}"><span>{{ row.error }}</span></template></el-table-column>
+
+<!--          <el-table-column label="duration"><template slot-scope="{row}"><span>{{ row.duration }}</span></template></el-table-column>-->
+<!--          <el-table-column label="traceIds"><template slot-scope="{row}"><span>{{ row.traceIds }}</span></template></el-table-column>-->
+          <el-table-column label="endpointNames"><template slot-scope="{row}"><span>{{ row.endpointNames }}</span></template></el-table-column>
+
+        </el-table>
+        <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogBrokenTraceInfo.visible = false">确认</el-button></span>
+      </el-dialog>
 
     </div>
     <!-- 数据部分结束 -->
@@ -189,17 +207,18 @@
         listQuery: {
           startGte: null,
           endLt: null,
-          minutesAgo: 15,
+          minutesAgo: 180,
           duration: 0
         },
         listQueryExt: {qTimeRange: []},
         isLoaded: false,
-        data: null,
-        brokenSwLabel: "断掉的链路",
-        runtimeSwLabel: "RuntimeException异常链路",
-
-        dialogServiceInfo: {visible: false} // 显示服务详情信息
+        data: null
+        , brokenSwLabel: "断掉的链路"
+        , runtimeSwLabel: "RuntimeException异常链路"
+        , dialogServiceInfo: {visible: false} // 显示服务详情信息
+        , dialogBrokenTraceInfo: {visible: false}  // 弹窗显示断路详情
         , tableBiGroup: {list: [], labelName: "业务分组统计"}
+        , brokenTableData:[]
       }
     },
     created() {
@@ -218,6 +237,16 @@
         ]
 
         this.dialogServiceInfo.visible = true
+      }
+      , showDialogBrokenTraceInfo(row) {
+        console.log("显示断路详情")
+        console.log(row)
+        this.dialogBrokenTraceInfo.list = []
+        for (let traceId of Object.keys(this.data.traceBroken)) {
+          this.dialogBrokenTraceInfo.list = this.data.traceBroken[traceId]
+        }
+        console.log(this.dialogBrokenTraceInfo.list)
+        this.dialogBrokenTraceInfo.visible = true
       },
 
       doSearch() {
@@ -237,17 +266,28 @@
         traceCheck(this.listQuery)
         // traceCheckApiDev(this.listQuery)
           .then(response => {
+            this.isLoaded = true
             this.data = response.data
             this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
             this.runtimeSwLabel = "RuntimeException异常链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
-            this.isLoaded = true
-
+            // 构建业务分组数据
             this.tableBiGroup.list = []
             for (let biName of Object.keys(this.data.businessTraceIdCount)) {
               let biCount = this.data.businessTraceIdCount[biName]
               this.tableBiGroup.list.push({key: biName, value: biCount})
             }
             this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+            // 构建brokenTrace数据 brokenTableData
+            this.brokenTableData=[]
+            for (let traceId of Object.keys(this.data.traceBroken)) {
+              this.brokenTableData.push({
+                traceId: traceId
+                , startTime: this.data.traceBroken[traceId][0].startDateTime
+              })
+            }
+            console.log("新断路表：")
+            console.log(this.brokenTableData)
+
 
             this.$notify({
               title: '数据加载成功',
