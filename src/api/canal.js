@@ -18,12 +18,12 @@ export function traceCheck(query) {
 }
 
 
-// export function traceCheck(query) {
-//   return request({
-//     url: 'http://igetcool-data-query-sw-dev.svc.igetcool.com/admin/dataquery/sw/checkpoint',
-//     method: 'get',
-//     params: query
-//   })
-// }
+export function traceCheckApiDev(query) {
+  return request({
+    url: 'http://igetcool-data-query-sw-dev.svc.igetcool.com/admin/dataquery/sw/checkpoint',
+    method: 'get',
+    params: query
+  })
+}
 
 
