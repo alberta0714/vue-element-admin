@@ -41,18 +41,13 @@
       </el-row>
     </el-form>
 
-
     <div style="margin-top: 10px;" v-if="!isLoaded">
       <aside><strong>加载中……</strong></aside>
     </div>
 
-
     <div v-if="isLoaded">
-
-      <h4>基础信息：</h4>
       <aside>
         <p>
-          筛选时间范围：{{data.timeRangeStartGte}} ~ {{data.timeRangeEndLt}}<br/>
           持续始末时间：{{data.timeStart}} ~ {{data.timeEnd}}<br/>
           扫描相关根TraceId总数：
           <el-tag>
@@ -64,13 +59,16 @@
         <!--            <dd> 业务对象：{{data.businessTraceIdCount}}</dd>-->
       </aside>
 
+      <!-- 卡片 -->
       <h4>服务映射及<span style="color:red;">异常链路</span>信息：</h4>
       <el-tabs type="border-card">
+        
+        <!-- 当前Skywalking涉及服务与ID的映 -->
         <el-tab-pane label="当前Skywalking涉及服务与ID的映">
           <el-table :data="data.trafficList" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="名称" element-loading-text="请给我点时间！">
-              <template slot-scope="{row}">
-                <span @click="showDialogServiceInfo(row)">{{ row.name }}</span>
+              <template slot-scope="{row}" >
+                <span @click="showDialogServiceInfo(row)" style="cursor: pointer;">{{ row.name }}</span>
               </template>
             </el-table-column>
 
@@ -90,6 +88,7 @@
           </el-table>
         </el-tab-pane>
 
+        <!--  断路-链路 -->
         <el-tab-pane :label="brokenSwLabel">
           <el-table :data="data.trafficBrokenTraceIdSet" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="TraceId">
@@ -100,6 +99,7 @@
           </el-table>
         </el-tab-pane>
 
+        <!--  运行时异常-链路 -->
         <el-tab-pane :label="runtimeSwLabel">
           <el-table :data="data.runtimeExceptionErrorSet" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="TraceId">
@@ -190,7 +190,7 @@
           startGte: null,
           endLt: null,
           minutesAgo: 15,
-          duration: 3000
+          duration: 0
         },
         listQueryExt: {qTimeRange: []},
         isLoaded: false,
