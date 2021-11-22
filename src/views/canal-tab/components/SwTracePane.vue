@@ -1,6 +1,46 @@
 <template>
   <div>
-    <el-button @click="traceCheck()">点击扫描链路</el-button>
+    <el-form>
+      <el-row :gutter="10">
+        <el-col style="float: left; width: 220px;">
+          <el-form-item label="Quick:">
+            <el-select v-model="listQuery.minutesAgo" style="width: 120px;">
+              <el-option :value="5" :key="5" label="5分钟前"/>
+              <el-option :value="15" :key="15" label="15分钟前"/>
+              <el-option :value="30" :key="30" label="30分钟前"/>
+              <el-option :value="60" :key="60" label="1小时前"/>
+              <el-option :value="180" :key="180" label="3小时前"/>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col style="float: left; width:520px;">
+          <el-form-item label="Time Range:">
+            <el-date-picker
+              v-model="listQueryExt.qTimeRange"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="截止日期"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+
+        <el-col style="float: left; width:340px;">
+          <el-form-item label="Duration(ms): ">
+            <el-input-number placeholder="DURATION" v-model="listQuery.duration"/>
+          </el-form-item>
+        </el-col>
+
+        <el-col style="float: left; width:320px;">
+          <el-button class="filter-item" type="primary" icon="search"
+                     @click="doSearch()">扫描链路
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+
 
     <div style="margin-top: 10px;" v-if="!isLoaded">
       <aside><strong>加载中……</strong></aside>
@@ -131,20 +171,28 @@
   import VueCountTo from "vue-count-to/src/vue-countTo";
   import BackToTop from '@/components/BackToTop'
   // import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
+  import waves from '@/directive/waves' // waves directive
+  import MDinput from '@/components/MDinput'
+  import Sticky from '@/components/Sticky' // 粘性header组件
+  import Tinymce from '@/components/Tinymce'
+  import Upload from '@/components/Upload/SingleImage3'
+  import {validURL} from '@/utils/validate'
 
   export default {
     name: "SwTracePane",
     // directives: "elDragDialog",
     components: {VueCountTo, SplitPane, countTo, BackToTop,},
 
+
     data() {
       return {
-        list: null,
         listQuery: {
           startGte: null,
           endLt: null,
-          minutesAgo: 15
+          minutesAgo: 15,
+          duration: 3000
         },
+        listQueryExt: {qTimeRange: []},
         isLoaded: false,
         data: null,
         brokenSwLabel: "断掉的链路",
@@ -155,7 +203,7 @@
       }
     },
     created() {
-      this.traceCheck()
+      this.doSearch()
     },
     methods: {
       showDialogServiceInfo(data) {
@@ -172,21 +220,40 @@
         this.dialogServiceInfo.visible = true
       },
 
-      traceCheck() {
+      doSearch() {
+        this.$notify({
+          title: '数据加载中',
+          message: '数据加载中',
+          type: 'info',
+          duration: 2000
+        })
+
         this.isLoaded = false
         this.$emit('create') // for test
-        traceCheck(this.listQuery).then(response => {
-          this.data = response.data
-          this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
-          this.runtimeSwLabel = "RuntimeException异常链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
-          this.isLoaded = true
+        if (this.listQueryExt.qTimeRange.length == 2) {
+          this.listQuery.startGte = this.listQueryExt.qTimeRange[0]
+          this.listQuery.endLt = this.listQueryExt.qTimeRange[1]
+        }
+        traceCheck(this.listQuery)
+          .then(response => {
+            this.data = response.data
+            this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
+            this.runtimeSwLabel = "RuntimeException异常链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
+            this.isLoaded = true
 
-          this.tableBiGroup.list = []
-          for (let biName of Object.keys(this.data.businessTraceIdCount)) {
-            let biCount = this.data.businessTraceIdCount[biName]
-            this.tableBiGroup.list.push({key: biName, value: biCount})
-          }
-          this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+            this.tableBiGroup.list = []
+            for (let biName of Object.keys(this.data.businessTraceIdCount)) {
+              let biCount = this.data.businessTraceIdCount[biName]
+              this.tableBiGroup.list.push({key: biName, value: biCount})
+            }
+            this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+          })
+
+        this.$notify({
+          title: '数据加载成功',
+          message: '数据加载成功',
+          type: 'success',
+          duration: 2000
         })
       }
 
