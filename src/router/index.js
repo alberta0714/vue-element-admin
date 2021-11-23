@@ -85,33 +85,35 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: '控制面板',
-        meta: { title: '控制面板', icon: 'dashboard', affix: true }
-        , hidden: true
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: '文档Documentation',
-        meta: { title: '文档', icon: 'documentation', affix: true }
-        , hidden: true
-      }
-    ]
-  },
+  // {
+  //   path: '/dashboard',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: '控制面板',
+  //       meta: { title: '控制面板', icon: 'dashboard', affix: true }
+  //       , hidden: true
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   path: '/documentation',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/documentation/index'),
+  //       name: '文档Documentation',
+  //       meta: { title: '文档', icon: 'documentation', affix: true }
+  //       , hidden: true
+  //     }
+  //   ]
+  // },
+
   {
     path: '/guide',
     component: Layout,
