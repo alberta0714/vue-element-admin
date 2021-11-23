@@ -35,8 +35,9 @@
         </el-col>
 
         <el-col style="float: left; width:420px;">
-          <el-button class="filter-item" icon="search" @click="doScanSwTraces()" type="primary">扫描链路</el-button>
+          <el-button class="filter-item" icon="el-icon-search" @click="doScanSwTraces()" type="primary">扫描链路</el-button>
         </el-col>
+<!--        <el-button icon="el-icon-search" type="primary" @click.prevent.stop="guide">Show Guide</el-button>-->
       </el-row>
     </el-form>
 
