@@ -9,7 +9,7 @@ export function fetchList(query) {
 }
 
 
-export function traceCheck(query) {
+export function apiDataQuerySwCheckPoint(query) {
   return request({
     url: '/admin/dataquery/sw/checkpoint',
     method: 'get',
@@ -18,7 +18,7 @@ export function traceCheck(query) {
 }
 
 
-export function traceCheckApiDev(query) {
+export function apiDataQuerySwCheckPointDev(query) {
   return request({
     url: 'http://igetcool-data-query-sw-dev.svc.igetcool.com/admin/dataquery/sw/checkpoint',
     method: 'get',
