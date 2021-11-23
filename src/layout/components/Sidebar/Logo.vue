@@ -1,4 +1,5 @@
 <template>
+
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
@@ -25,7 +26,9 @@ export default {
   data() {
     return {
       title: '订阅查询链路',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      // logo: 'http://skywalking.apache.org/favicons/favicon-32x32.png'
+      logo: 'favicon-32x32.png'
     }
   }
 }
