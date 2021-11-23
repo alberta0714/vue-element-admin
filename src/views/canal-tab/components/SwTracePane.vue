@@ -74,8 +74,18 @@
         </el-tab-pane>
         <!--【TAB-PANE】运行时异常-链路 -->
         <el-tab-pane :label="runtimeSwLabel" name="runtimeExceptionTab">
-          <el-table :data="data.runtimeExceptionErrorSet" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="TraceId"><template slot-scope="scope"><span>{{ scope.row }}</span></template></el-table-column>
+          <el-table :data="runtimeExceptionTableData" border fit highlight-current-row style="width: 100%">
+            <el-table-column align="center" label="TraceId"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.traceId}}</span></template></el-table-column>
+            <el-table-column align="center" label="StartTime"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.startTime}}</span></template></el-table-column>
+            <el-table-column label="耗时"><template slot-scope="{row}"><pre>{{ row.totalTime }}</pre></template></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <!--【TAB-PANE】SlowTrace-链路 -->
+        <el-tab-pane :label="slowTrace.labelPrefix + slowTrace.labelSuffix" name="slowTraceTab">
+          <el-table :data="slowTrace.tableItems" border fit highlight-current-row style="width: 100%">
+            <el-table-column align="center" label="TraceId"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.traceId}}</span></template></el-table-column>
+            <el-table-column align="center" label="StartTime"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.startTime}}</span></template></el-table-column>
+            <el-table-column label="耗时"><template slot-scope="{row}"><pre>{{ row.totalTime }}</pre></template></el-table-column>
           </el-table>
         </el-tab-pane>
         <!--【TAB-PANE】分组统计 -->
@@ -108,6 +118,19 @@
           <el-table-column label="json"><template slot-scope="{row}"><pre>{{ row }}</pre></template></el-table-column>
         </el-table>
         <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogBrokenTraceInfo.visible = false">确认</el-button></span>
+      </el-dialog>
+      <!--【DIALOG】断路详情对话窗口 -->
+      <el-dialog :visible.sync="dialogRuntimeTraceInfo.visible" title="异常详情">
+        <el-table :data="dialogRuntimeTraceInfo.list" border fit highlight-current-row>
+          <el-table-column label="segmentId"><template slot-scope="{row}"><span>{{ row.segmentId }}</span></template></el-table-column>
+          <el-table-column label="startDateTime"><template slot-scope="{row}"><span>{{ row.startDateTime }}</span></template></el-table-column>
+          <el-table-column label="error"><template slot-scope="{row}"><span>{{ row.error }}</span></template></el-table-column>
+          <!--          <el-table-column label="duration"><template slot-scope="{row}"><span>{{ row.duration }}</span></template></el-table-column>-->
+          <!--          <el-table-column label="traceIds"><template slot-scope="{row}"><span>{{ row.traceIds }}</span></template></el-table-column>-->
+          <el-table-column label="endpointNames"><template slot-scope="{row}"><span>{{ row.endpointNames }}</span></template></el-table-column>
+          <el-table-column label="json"><template slot-scope="{row}"><pre>{{ row }}</pre></template></el-table-column>
+        </el-table>
+        <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogRuntimeTraceInfo.visible = false">确认</el-button></span>
       </el-dialog>
 
     </div>
@@ -149,10 +172,21 @@
         isLoaded: false,
         data: null
         , brokenSwLabel: "断掉的链路", runtimeSwLabel: "RuntimeException异常链路"
-        , dialogServiceInfo: {visible: false} // 显示服务详情信息
-        , dialogBrokenTraceInfo: {visible: false}  // 弹窗显示断路详情
+
         , tableBiGroup: {list: [], labelName: "业务分组统计"}
-        , brokenTableData: []
+        , brokenTableData: [] // 表格数据：断链路
+        , runtimeExceptionTableData: [] // 表格数据：运行时异常的
+
+        , dialogServiceInfo: {visible: false, list:[]} // 弹详情表格：服务
+        , dialogBrokenTraceInfo: {visible: false, list:[]}  // 弹详情表格：断路
+        , dialogRuntimeTraceInfo: {visible: false, list:[]} // 弹详情表格：运行时异常
+
+        , slowTrace:{
+            labelPrefix: "SlowTrace列表",
+            labelSuffix: "",
+            tableItems: [],
+            dialog: {visible: false}
+        }
       }
     },
     created() {
@@ -165,7 +199,7 @@
       activeTabName(val) { this.$router.push(`${this.$route.path}?tab=${val}`) }
     },
     methods: {
-      // 显示服务详情对话框
+      // 显示详情表格：服务
       showDialogServiceInfo(data) {
         this.dialogServiceInfo.list = [
           {key: "服务名称", value: data.name},
@@ -175,10 +209,15 @@
         ]
         this.dialogServiceInfo.visible = true
       },
-      // 显示断路对话框
+      // 显示详情表格：断路
       showDialogBrokenTraceInfo(traceId) {
         this.dialogBrokenTraceInfo.list = this.data.traceBroken[traceId]
         this.dialogBrokenTraceInfo.visible = true
+      },
+      // 显示详情表格：异常
+      showDialogRuntimeTraceInfo(traceId) {
+        this.dialogRuntimeTraceInfo.list = this.data.traceRuntimeException[traceId]
+        this.dialogRuntimeTraceInfo.visible = true
       },
       // 执行链路扫描
       doScanSwTraces() {
@@ -202,13 +241,16 @@
             this.tableBiGroup.list.push({key: biName, value: biCount})
           }
           this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+          // 设置默认选种的选项卡
+          // if (Object.keys(this.data.traceBroken).length > 0) {
+          //   this.activeTabName = 'brokenTab'
+          // } else if (this.data.runtimeExceptionErrorSet.length > 0) {
+          //   this.activeTabName = 'runtimeExceptionTab'
+          // } else {
+          //   this.activeTabName = 'serviceTab'
+          // }
           // 构建brokenTrace数据 brokenTableData
           this.brokenTableData = []
-          if (this.data.traceBroken) {
-            this.activeTabName = 'brokenTab'
-          } else if (this.data.runtimeExceptionErrorSet) {
-            this.activeTabName = 'runtimeExceptionTab'
-          }
           for (let traceId of Object.keys(this.data.traceBroken)) {
             let segList = this.data.traceBroken[traceId];
 
@@ -218,6 +260,29 @@
               , totalTime: Math.abs(segList[segList.length - 1].start - segList[0].start) + "ms"
             })
           }
+          // 构建表格数据：运行异常的
+          this.runtimeExceptionTableData = [];
+          for(let traceId of Object.keys(this.data.traceRuntimeException)){
+            let segList = this.data.traceRuntimeException[traceId];
+            this.runtimeExceptionTableData.push({
+              traceId: traceId
+              , startTime: segList[0].startDateTime
+              , totalTime: Math.abs(segList[segList.length - 1].start - segList[0].start) + "ms"
+            })
+          }
+          // 构建表格数据：SlowTrace
+          this.slowTrace.tableItems = []
+          for(let trace of this.data.slowTraceList) {
+            this.slowTrace.tableItems.push({
+              traceId: trace.traceIds
+              , startTime: trace.startDateTime
+              , totalTime: trace.duration + "ms"
+            })
+          }
+          if (this.slowTrace.tableItems.length > 0) {
+            this.slowTrace.labelSuffix = "(" + this.slowTrace.tableItems.length + "+)";
+          }
+
           // 发送通知
           this.$notify({title: '数据加载成功', message: '数据加载成功', type: 'success', duration: 2000})
         })
