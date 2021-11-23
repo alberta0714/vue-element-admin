@@ -82,10 +82,10 @@
         </el-tab-pane>
         <!--【TAB-PANE】SlowTrace-链路 -->
         <el-tab-pane :label="slowTrace.labelPrefix + slowTrace.labelSuffix" name="slowTraceTab">
-          <el-table :data="slowTrace.tableItems" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="TraceId"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.traceId}}</span></template></el-table-column>
-            <el-table-column align="center" label="StartTime"><template slot-scope="scope"><span @click="showDialogRuntimeTraceInfo(scope.row.traceId)" style="cursor: pointer;">{{ scope.row.startTime}}</span></template></el-table-column>
-            <el-table-column label="耗时"><template slot-scope="{row}"><pre>{{ row.totalTime }}</pre></template></el-table-column>
+          <el-table :data="this.slowTrace.tableItems" border fit highlight-current-row style="width: 100%">
+            <el-table-column align="center" label="TraceId"><template slot-scope="{row}"><span @click="showDialogSlowTraceInfo(row)" style="cursor: pointer;">{{row.traceId}}</span></template></el-table-column>
+            <el-table-column align="center" label="StartTime"><template slot-scope="{row}"><span @click="showDialogSlowTraceInfo(row.data)" style="cursor: pointer;">{{row.startTime}}</span></template></el-table-column>
+            <el-table-column label="耗时"><template slot-scope="{row}"><pre>{{row.totalTime}}</pre></template></el-table-column>
           </el-table>
         </el-tab-pane>
         <!--【TAB-PANE】分组统计 -->
@@ -131,6 +131,20 @@
           <el-table-column label="json"><template slot-scope="{row}"><pre>{{ row }}</pre></template></el-table-column>
         </el-table>
         <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogRuntimeTraceInfo.visible = false">确认</el-button></span>
+      </el-dialog>
+      <!--【DIALOG】SlowLog慢查询 -->
+      <el-dialog :visible.sync="slowTrace.dialog.visible" title="SlowTrace">
+<!--        <el-table :data="dialogRuntimeTraceInfo.list" border fit highlight-current-row>-->
+<!--          <el-table-column label="segmentId"><template slot-scope="{row}"><span>{{ row.segmentId }}</span></template></el-table-column>-->
+<!--          <el-table-column label="startDateTime"><template slot-scope="{row}"><span>{{ row.startDateTime }}</span></template></el-table-column>-->
+<!--          <el-table-column label="error"><template slot-scope="{row}"><span>{{ row.error }}</span></template></el-table-column>-->
+<!--          &lt;!&ndash;          <el-table-column label="duration"><template slot-scope="{row}"><span>{{ row.duration }}</span></template></el-table-column>&ndash;&gt;-->
+<!--          &lt;!&ndash;          <el-table-column label="traceIds"><template slot-scope="{row}"><span>{{ row.traceIds }}</span></template></el-table-column>&ndash;&gt;-->
+<!--          <el-table-column label="endpointNames"><template slot-scope="{row}"><span>{{ row.endpointNames }}</span></template></el-table-column>-->
+<!--          <el-table-column label="json"><template slot-scope="{row}"><pre>{{ row }}</pre></template></el-table-column>-->
+<!--        </el-table>-->
+        <pre>{{slowTrace.dialog.data}}</pre>
+        <span slot="footer" class="dialog-footer"><el-button type="primary" @click="slowTrace.dialog.visible = false">确认</el-button></span>
       </el-dialog>
 
     </div>
@@ -185,7 +199,7 @@
             labelPrefix: "SlowTrace列表",
             labelSuffix: "",
             tableItems: [],
-            dialog: {visible: false}
+            dialog: {visible: false, data:null, list:[] }
         }
       }
     },
@@ -219,6 +233,11 @@
         this.dialogRuntimeTraceInfo.list = this.data.traceRuntimeException[traceId]
         this.dialogRuntimeTraceInfo.visible = true
       },
+      // 显示详情表格：SlowTrace
+      showDialogSlowTraceInfo(trace){
+        this.slowTrace.dialog.data = trace
+        this.slowTrace.dialog.visible = true
+      },
       // 执行链路扫描
       doScanSwTraces() {
         this.$notify({title: '数据加载中', message: '数据加载中', type: 'info', duration: 2000})
@@ -242,13 +261,13 @@
           }
           this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
           // 设置默认选种的选项卡
-          // if (Object.keys(this.data.traceBroken).length > 0) {
-          //   this.activeTabName = 'brokenTab'
-          // } else if (this.data.runtimeExceptionErrorSet.length > 0) {
-          //   this.activeTabName = 'runtimeExceptionTab'
-          // } else {
-          //   this.activeTabName = 'serviceTab'
-          // }
+          if (Object.keys(this.data.traceBroken).length > 0) {
+            this.activeTabName = 'brokenTab'
+          } else if (this.data.runtimeExceptionErrorSet.length > 0) {
+            this.activeTabName = 'runtimeExceptionTab'
+          } else {
+            this.activeTabName = 'serviceTab'
+          }
           // 构建brokenTrace数据 brokenTableData
           this.brokenTableData = []
           for (let traceId of Object.keys(this.data.traceBroken)) {
@@ -277,8 +296,10 @@
               traceId: trace.traceIds
               , startTime: trace.startDateTime
               , totalTime: trace.duration + "ms"
+              , data: trace
             })
           }
+          this.slowTrace.labelSuffix = "";
           if (this.slowTrace.tableItems.length > 0) {
             this.slowTrace.labelSuffix = "(" + this.slowTrace.tableItems.length + "+)";
           }
