@@ -11,6 +11,17 @@ mv dist/* ./
 
 rm -rf dist
 
+cd "D:\wks_igetcool\architecture\igetcool-data-query"
+git add *
+git commit -a -m "【sw前端调整】"
+git push
+git checkout dev
+git merge optimize/v202111-trace
+git push
+git checkout optimize/v202111-trace
+git status
+
+
 
 
 
