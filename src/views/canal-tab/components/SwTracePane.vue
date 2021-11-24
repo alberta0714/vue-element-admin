@@ -207,14 +207,6 @@
       const tab = this.$route.query.tab
       if (tab) { this.activeTabName = tab }
       this.doScanSwTraces()
-      // 初始化时设置一次选项卡
-      if (Object.keys(this.data.traceBroken).length > 0) {
-        this.activeTabName = 'brokenTab'
-      } else if (this.data.runtimeExceptionErrorSet.length > 0) {
-        this.activeTabName = 'runtimeExceptionTab'
-      } else {
-        this.activeTabName = 'serviceTab'
-      }
     },
     watch: {
       // 监听activeName的值
@@ -271,13 +263,15 @@
           }
           this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
           // 设置默认选种的选项卡
-          // if (Object.keys(this.data.traceBroken).length > 0) {
-          //   this.activeTabName = 'brokenTab'
-          // } else if (this.data.runtimeExceptionErrorSet.length > 0) {
-          //   this.activeTabName = 'runtimeExceptionTab'
-          // } else {
-          //   this.activeTabName = 'serviceTab'
-          // }
+          if (Object.keys(this.data.traceBroken).length > 0) {
+            this.activeTabName = 'brokenTab'
+          } else if (this.data.runtimeExceptionErrorSet.length > 0) {
+            this.activeTabName = 'runtimeExceptionTab'
+          } else if(this.listQuery.duration > 0){
+            this.activeTabName = 'slowTraceTab'
+          } else {
+            this.activeTabName = 'serviceTab'
+          }
           // 构建brokenTrace数据 brokenTableData
           this.brokenTableData = []
           for (let traceId of Object.keys(this.data.traceBroken)) {
