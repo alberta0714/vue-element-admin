@@ -219,18 +219,18 @@
           {key: "服务名称", value: data.name},
           {key: "Skywalking对应ID", value: data.id},
           {key: "节点类型", value: data.nodeTypeName},
-          {key: "服务组", value: data.serviceGroup},
+          {key: "服务组", value: data.aggsByTag},
         ]
         this.dialogServiceInfo.visible = true
       },
       // 显示详情表格：断路
       showDialogBrokenTraceInfo(traceId) {
-        this.dialogBrokenTraceInfo.list = this.data.traceBroken[traceId]
+        this.dialogBrokenTraceInfo.list = this.data.brokenTraces[traceId]
         this.dialogBrokenTraceInfo.visible = true
       },
       // 显示详情表格：异常
       showDialogRuntimeTraceInfo(traceId) {
-        this.dialogRuntimeTraceInfo.list = this.data.traceRuntimeException[traceId]
+        this.dialogRuntimeTraceInfo.list = this.data.runtimeExceptionTraces[traceId]
         this.dialogRuntimeTraceInfo.visible = true
       },
       // 显示详情表格：SlowTrace
@@ -253,19 +253,19 @@
         apiDataQuerySwCheckPoint(this.listQuery).then(response => {
           this.isLoaded = true
           this.data = response.data
-          this.brokenSwLabel = "断掉的链路(" + response.data.trafficBrokenTraceIdSet.length + ")个"
-          this.runtimeSwLabel = "RuntimeException异常链路(" + response.data.runtimeExceptionErrorSet.length + ")个"
+          this.brokenSwLabel = "断掉的链路(" + Object.keys(this.data.brokenTraces).length + ")个"
+          this.runtimeSwLabel = "RuntimeException异常链路(" + Object.keys(this.data.runtimeExceptionTraces).length + ")个"
           // 构建业务分组数据
           this.tableBiGroup.list = []
-          for (let biName of Object.keys(this.data.businessTraceIdCount)) {
-            let biCount = this.data.businessTraceIdCount[biName]
+          for (let biName of Object.keys(this.data.aggsByTag)) {
+            let biCount = this.data.aggsByTag[biName]
             this.tableBiGroup.list.push({key: biName, value: biCount})
           }
-          this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.businessTraceIdCount).length + ")个";
+          this.tableBiGroup.labelName = "业务分组统计(" + Object.keys(this.data.aggsByTag).length + ")个";
           // 设置默认选种的选项卡
-          if (Object.keys(this.data.traceBroken).length > 0) {
+          if (Object.keys(this.data.brokenTraces).length > 0) {
             this.activeTabName = 'brokenTab'
-          } else if (this.data.runtimeExceptionErrorSet.length > 0) {
+          } else if (Object.keys(this.data.runtimeExceptionTraces).length > 0) {
             this.activeTabName = 'runtimeExceptionTab'
           } else if(this.listQuery.duration > 0){
             this.activeTabName = 'slowTraceTab'
@@ -274,8 +274,8 @@
           }
           // 构建brokenTrace数据 brokenTableData
           this.brokenTableData = []
-          for (let traceId of Object.keys(this.data.traceBroken)) {
-            let segList = this.data.traceBroken[traceId];
+          for (let traceId of Object.keys(this.data.brokenTraces)) {
+            let segList = this.data.brokenTraces[traceId];
 
             this.brokenTableData.push({
               traceId: traceId
@@ -285,8 +285,8 @@
           }
           // 构建表格数据：运行异常的
           this.runtimeExceptionTableData = [];
-          for(let traceId of Object.keys(this.data.traceRuntimeException)){
-            let segList = this.data.traceRuntimeException[traceId];
+          for(let traceId of Object.keys(this.data.runtimeExceptionTraces)){
+            let segList = this.data.runtimeExceptionTraces[traceId];
             this.runtimeExceptionTableData.push({
               traceId: traceId
               , startTime: segList[0].startDateTime
