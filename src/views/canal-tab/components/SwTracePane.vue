@@ -306,7 +306,7 @@
           }
           this.slowTrace.labelSuffix = "";
           if (this.slowTrace.tableItems.length > 0) {
-            this.slowTrace.labelSuffix = "(" + this.slowTrace.tableItems.length + "+)";
+            this.slowTrace.labelSuffix = "${duration}≥" + this.listQuery.duration + "ms(" + this.slowTrace.tableItems.length + "+)";
           }
 
           // 发送通知
