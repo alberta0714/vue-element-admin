@@ -85,6 +85,7 @@ export const constantRoutes = [
     ]
   },
 
+  // 增加更丰富的菜单功能
   {
     path: '/igetcool/opeartioncenter/config',
     component: Layout,
@@ -134,6 +135,24 @@ export const constantRoutes = [
         component: () => import('@/views/igetcool/config/system/dataquery'),
         name: 'Other',
         meta: { title: '其它配置', icon: 'el-icon-more' }
+      },
+      {
+        path: 'canalTools',
+        name: 'Canal工具',
+        component: () => import('@/views/igetcool/config/system/canalsync'),
+        meta: { title: 'Canal工具', icon: 'el-icon-connection' }
+      },
+      {
+        path: 'kafkaTools',
+        name: 'Kafka工具',
+        component: () => import('@/views/igetcool/config/system/dataquery'),
+        meta: { title: 'Kafka工具', icon: 'el-icon-s-platform' }
+      },
+      {
+        path: 'zkTools',
+        name: 'ZK工具',
+        component: () => import('@/views/igetcool/config/system/dataquery'),
+        meta: { title: 'ZK工具', icon: 'el-icon-more' }
       }
     ]
   },
