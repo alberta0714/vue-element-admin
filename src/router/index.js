@@ -85,6 +85,59 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/igetcool/opeartioncenter/config',
+    component: Layout,
+    alwaysShow: true,
+    meta: { title:'运营配置', icon: 'el-icon-s-operation' },
+    children: [
+      {
+        path: 'coursepackage',
+        component: () => import('@/views/igetcool/config/activities/coursepackage'),
+        name: 'CoursePackages',
+        meta: { title: '课包买送活动', icon: 'el-icon-present' }
+      },
+      {
+        path: 'searchtop',
+        component: () => import('@/views/igetcool/config/search/top'),
+        name: 'SearchTop',
+        meta: { title: '搜索置顶', icon: 'el-icon-caret-top' }
+      },
+      {
+        path: 'searchblock',
+        component: () => import('@/views/igetcool/config/search/block'),
+        name: 'SearchBlock',
+        meta: { title: '搜索屏蔽词', icon: 'el-icon-remove' }
+      }
+    ]
+  },
+  {
+    path: '/igetcool/dataquery/config',
+    component: Layout,
+    alwaysShow: true,
+    meta: { title:'订阅查询中心配置', icon: 'el-icon-setting' },
+    children: [
+      {
+        path: 'canalsync',
+        component: () => import('@/views/igetcool/config/system/canalsync'),
+        name: 'CanalSync',
+        meta: { title: '订阅配置', icon: 'el-icon-connection' }
+      },
+      {
+        path: 'dataquery',
+        component: () => import('@/views/igetcool/config/system/dataquery'),
+        name: 'DataQuery',
+        meta: { title: '查询配置', icon: 'el-icon-s-platform' }
+      },
+      {
+        path: 'other',
+        component: () => import('@/views/igetcool/config/system/dataquery'),
+        name: 'Other',
+        meta: { title: '其它配置', icon: 'el-icon-more' }
+      }
+    ]
+  },
+
   // {
   //   path: '/dashboard',
   //   component: Layout,
