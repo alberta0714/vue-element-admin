@@ -11,6 +11,10 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import igcSwRouter from "./modules/igcSw";
+import igcSubPlatform from "./modules/igcSubPlatform";
+import igcOperationConfig from "./modules/igcOperationConfig";
+import igcConfigTool from "./modules/igcConfigTool";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -72,72 +76,10 @@ export const constantRoutes = [
   },
 
 
-  // 抄自tab的前端样式
-  {
-    path: '/',
-    component: Layout,
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/canal-tab/index'),
-        name: 'Canal-Tab',
-        meta: { title: '订阅SW链路预警', icon: 'el-icon-warning-outline' }
-      }
-    ]
-  },
-
-  {
-    path: '/igetcool/opeartioncenter/config',
-    component: Layout,
-    alwaysShow: true,
-    meta: { title:'运营配置', icon: 'el-icon-s-operation' },
-    children: [
-      {
-        path: 'coursepackage',
-        component: () => import('@/views/igetcool/config/activities/coursepackage'),
-        name: 'CoursePackages',
-        meta: { title: '课包买送活动', icon: 'el-icon-present' }
-      },
-      {
-        path: 'searchtop',
-        component: () => import('@/views/igetcool/config/search/top'),
-        name: 'SearchTop',
-        meta: { title: '搜索置顶', icon: 'el-icon-caret-top' }
-      },
-      {
-        path: 'searchblock',
-        component: () => import('@/views/igetcool/config/search/block'),
-        name: 'SearchBlock',
-        meta: { title: '搜索屏蔽词', icon: 'el-icon-remove' }
-      }
-    ]
-  },
-  {
-    path: '/igetcool/dataquery/config',
-    component: Layout,
-    alwaysShow: true,
-    meta: { title:'订阅查询中心配置', icon: 'el-icon-setting' },
-    children: [
-      {
-        path: 'canalsync',
-        component: () => import('@/views/igetcool/config/system/canalsync'),
-        name: 'CanalSync',
-        meta: { title: '订阅配置', icon: 'el-icon-connection' }
-      },
-      {
-        path: 'dataquery',
-        component: () => import('@/views/igetcool/config/system/dataquery'),
-        name: 'DataQuery',
-        meta: { title: '查询配置', icon: 'el-icon-s-platform' }
-      },
-      {
-        path: 'other',
-        component: () => import('@/views/igetcool/config/system/dataquery'),
-        name: 'Other',
-        meta: { title: '其它配置', icon: 'el-icon-more' }
-      }
-    ]
-  },
+  igcSwRouter,
+  igcSubPlatform,
+  igcOperationConfig,
+  igcConfigTool,
 
 
   {

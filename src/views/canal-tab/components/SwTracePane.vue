@@ -181,7 +181,7 @@
     data() {
       return {
         activeTabName: null,
-        listQuery: {startGte: null, endLt: null, minutesAgo: 180, duration: 0},
+        listQuery: {startGte: null, endLt: null, minutesAgo: 15, duration: 0},
         listQueryExt: {qTimeRange: []},
         isLoaded: false,
         data: null
