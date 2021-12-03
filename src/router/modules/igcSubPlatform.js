@@ -11,8 +11,14 @@ const igcSubPlatform = {
     {
       path: 'index',
       component: () => import('@/views/igetcool/SubscriptionPlatform/index'),
-      name: 'SubscriptionPlatform',
-      meta: { title: '开放配置', icon: 'el-icon-postcard' }
+      name: 'SubscriptionPlatformCreate',
+      meta: { title: '创建配置', icon: 'el-icon-postcard' }
+    },
+    {
+      path: 'list',
+      component: () => import('@/views/igetcool/SubscriptionPlatform/index'),
+      name: 'SubscriptionPlatformList',
+      meta: { title: '订阅列表', icon: 'table' }
     }
   ]
 }
