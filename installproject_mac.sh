@@ -4,13 +4,14 @@
 DATA_QUERY_DIR=/usr/local/code/architecture/igetcool-data-query
 VEA_DIST_DIR=/usr/local/code/albert/vue-element-admin/dist
 SW_PUBLIC_DIR=/usr/local/code/architecture/igetcool-data-query/igetcool-data-query-sw-server/src/main/resources/public/
-#npm run build:prod
+rm -rf "${VEA_DIST_DIR}"
+npm run build:prod
 rm -rf "${SW_PUBLIC_DIR}"
-#mkdir "${SW_PUBLIC_DIR}"
-#cp -r "${VEA_DIST_DIR}" "${SW_PUBLIC_DIR}"
-#cd "${SW_PUBLIC_DIR}"
-#mv dist/* ./
-#rm -rf dist
+mkdir "${SW_PUBLIC_DIR}"
+cp -r "${VEA_DIST_DIR}" "${SW_PUBLIC_DIR}"
+cd "${SW_PUBLIC_DIR}"
+mv dist/* ./
+rm -rf dist
 
 #cd "${DATA_QUERY_DIR}"
 #git add *

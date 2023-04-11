@@ -206,7 +206,7 @@
     created() {
       const tab = this.$route.query.tab
       if (tab) { this.activeTabName = tab }
-      this.doScanSwTraces()
+      // this.doScanSwTraces()
     },
     watch: {
       // 监听activeName的值
