@@ -41,11 +41,11 @@
       </el-row>
     </el-form>
 
-    <div style="margin-top: 10px;" v-if="!isLoaded">
+    <div style="margin-top: 10px;" v-if="!isLoaded && showLoading">
       <aside><strong>加载中……</strong></aside>
     </div>
 
-    <div v-if="isLoaded">
+    <div style="margin-top: 10px;" v-if="isLoaded">
       <aside>
         <p>
           持续始末时间：{{data.timeStart}} ~ {{data.timeEnd}}<br/>
@@ -181,7 +181,7 @@
     data() {
       return {
         activeTabName: null,
-        listQuery: {startGte: null, endLt: null, minutesAgo: 15, duration: 0},
+        listQuery: {startGte: null, endLt: null, minutesAgo: 5, duration: 0},
         listQueryExt: {qTimeRange: []},
         isLoaded: false,
         data: null
@@ -243,6 +243,7 @@
       // 执行链路扫描
       doScanSwTraces() {
         this.$notify({title: '数据加载中', message: '数据加载中', type: 'info', duration: 2000})
+        this.showLoading=true
         this.isLoaded = false
         this.$emit('create') // for test
         if (this.listQueryExt.qTimeRange.length == 2) {
