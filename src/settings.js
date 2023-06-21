@@ -1,5 +1,5 @@
 module.exports = {
-  title: '订阅查询服务-链路扫描中心',
+  title: '平台服务',
 
   /**
    * @type {boolean} true | false

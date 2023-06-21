@@ -13,6 +13,7 @@ import tableRouter from './modules/table'
 import igcSwRouter from './modules/igcSw'
 import igcSubPlatform from './modules/igcSubPlatform'
 import igcOperationConfig from './modules/igcOperationConfig'
+import igcCharts from './modules/igcCharts'
 import igcConfigTool from './modules/igcConfigTool'
 
 import nestedRouter from './modules/nested'
@@ -80,6 +81,7 @@ export const constantRoutes = [
   igcSubPlatform,
   igcOperationConfig,
   igcConfigTool,
+  igcCharts,
 
   // {
   //   path: '/dashboard',

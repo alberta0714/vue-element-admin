@@ -25,10 +25,11 @@ export default {
   },
   data() {
     return {
-      title: '订阅查询链路',
+      title: '平台服务',
       // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
       // logo: 'http://skywalking.apache.org/favicons/favicon-32x32.png'
-      logo: 'favicon-32x32.png'
+      // logo: 'favicon-32x32.png'
+      logo: '265x265.ico'
     }
   }
 }
